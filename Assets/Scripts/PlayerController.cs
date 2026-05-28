@@ -4,13 +4,12 @@ using UnityEngine;
 public class PlayerController : NetworkBehaviour
 {
     public float moveSpeed = 5f;
-    private Rigidbody rb;
     private CharacterController controller;
-    private BaseAbility[] abilities;
+    [SerializeField] private BaseAbility[] abilities;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        controller = GetComponent<CharacterController>();
     }
 
     private void Start()
@@ -46,8 +45,8 @@ public class PlayerController : NetworkBehaviour
     private void HandleAbilities()
     {
         if (abilities == null) return;
-        if (Input.GetKeyDown(KeyCode.Q) && abilities.Length > 0) abilities[0]?.TryActivate(this);
-        if (Input.GetKeyDown(KeyCode.E) && abilities.Length > 1) abilities[1]?.TryActivate(this);
-        if (Input.GetKeyDown(KeyCode.R) && abilities.Length > 2) abilities[2]?.TryActivate(this);
+        if (Input.GetKeyDown(KeyCode.Q) && abilities.Length > 0) abilities[0]?.TryActivate(this); // Dash
+        if (Input.GetKeyDown(KeyCode.E) && abilities.Length > 1) abilities[1]?.TryActivate(this); // Projectile
+        if (Input.GetKeyDown(KeyCode.R) && abilities.Length > 2) abilities[2]?.TryActivate(this); // Heal
     }
 }
