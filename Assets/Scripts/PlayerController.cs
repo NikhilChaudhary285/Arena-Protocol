@@ -4,7 +4,12 @@ using UnityEngine;
 public class PlayerController : NetworkBehaviour
 {
     public float moveSpeed = 5f;
+
+    private Vector3 velocity;
+    public float gravity = -9.81f;
+
     private CharacterController controller;
+
     [SerializeField] private BaseAbility[] abilities;
 
     private void Awake()
@@ -25,6 +30,7 @@ public class PlayerController : NetworkBehaviour
         }
         GetComponent<Renderer>().material.color =
             OwnerClientId == 0 ? Color.blue : Color.green;
+        Debug.Log($"Player spawned | Owner: {OwnerClientId} | LocalClient: {NetworkManager.Singleton.LocalClientId} | IsOwner: {IsOwner}");
     }
 
     void Update()
@@ -38,8 +44,22 @@ public class PlayerController : NetworkBehaviour
     {
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
+
         Vector3 dir = new Vector3(h, 0, v).normalized;
-        controller.Move(dir * moveSpeed * Time.deltaTime);
+
+        // Send movement input to server
+        MoveServerRpc(dir);
+    }
+
+    [ServerRpc]
+    private void MoveServerRpc(Vector3 direction)
+    {
+        // Horizontal movement
+        controller.Move(direction * moveSpeed * Time.deltaTime);
+
+        // Gravity
+        velocity.y += gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
     }
 
     private void HandleAbilities()
