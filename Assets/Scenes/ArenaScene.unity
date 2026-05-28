@@ -403,6 +403,8 @@ GameObject:
   m_Component:
   - component: {fileID: 339609637}
   - component: {fileID: 339609638}
+  - component: {fileID: 339609639}
+  - component: {fileID: 339609640}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -439,6 +441,44 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hostButton: {fileID: 440256059}
   clientButton: {fileID: 1786796678}
+--- !u!114 &339609639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 339609636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1361179759
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &339609640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 339609636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b73248c0e9b12d240a1a26dfdd9d5b1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyPrefab: {fileID: 538482978058259374, guid: f2688e0132274a644bab0576416926be, type: 3}
+  enemiesPerWave: 3
+  timeBetweenWaves: 15
 --- !u!1 &342032913
 GameObject:
   m_ObjectHideFlags: 0
