@@ -1,6 +1,5 @@
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -21,7 +20,7 @@ public class GameManager : MonoBehaviour
 
     private void HideButtons()
     {
-        hostButton.SetActive(false);
-        clientButton.SetActive(false);
+        if (hostButton) hostButton.SetActive(false);
+        if (clientButton) clientButton.SetActive(false);
     }
 }

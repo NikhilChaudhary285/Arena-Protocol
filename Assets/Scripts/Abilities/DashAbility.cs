@@ -4,6 +4,8 @@ public class DashAbility : BaseAbility
 {
     public float dashDistance = 3f;
 
+    void Awake() { abilityName = "Dash"; cooldownDuration = 4f; }
+
     protected override void Activate(PlayerController player)
     {
         float h = Input.GetAxisRaw("Horizontal");

@@ -1,6 +1,5 @@
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class EnemyHealth : NetworkBehaviour
 {
@@ -21,8 +20,7 @@ public class EnemyHealth : NetworkBehaviour
 
     private void Die()
     {
-        // Add score before despawning
-        //FindObjectOfType<ScoreManager>()?.AddScore(10);
-        GetComponent<NetworkObject>().Despawn();
+        FindObjectOfType<ScoreManager>()?.AddScore(10);
+        GetComponent<NetworkObject>().Despawn(true);
     }
 }

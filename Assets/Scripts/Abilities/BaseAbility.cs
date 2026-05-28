@@ -2,11 +2,11 @@ using UnityEngine;
 
 public abstract class BaseAbility : MonoBehaviour
 {
-    public string abilityName;
+    public string abilityName = "Ability";
     public float cooldownDuration = 3f;
-    protected float cooldownTimer = 0f;
+    public float cooldownTimer = 0f;
     public bool IsReady => cooldownTimer <= 0f;
-    public float CooldownRemaining => cooldownTimer;
+    public float CooldownRemaining => Mathf.Max(0, cooldownTimer);
 
     protected virtual void Update()
     {

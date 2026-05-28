@@ -24,6 +24,7 @@ public class Projectile : NetworkBehaviour
 
     private void DestroyProjectile()
     {
-        GetComponent<NetworkObject>().Despawn();
+        if (IsSpawned)
+            GetComponent<NetworkObject>().Despawn(true);
     }
 }

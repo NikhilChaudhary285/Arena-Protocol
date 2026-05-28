@@ -3,16 +3,16 @@ using UnityEngine;
 
 public class EnemyAI : NetworkBehaviour
 {
-    public enum State { Patrol, Chase, Attack }
+    public enum AIState { Patrol, Chase, Attack }
 
-    [Header("Stats")]
+    [Header("Detection")]
     public float detectionRange = 8f;
     public float attackRange = 1.5f;
     public float moveSpeed = 3f;
     public float attackDamage = 10f;
     public float attackCooldown = 1.5f;
 
-    private State currentState = State.Patrol;
+    private AIState state = AIState.Patrol;
     private Transform target;
     private float attackTimer;
     private Vector3 patrolTarget;
@@ -26,52 +26,49 @@ public class EnemyAI : NetworkBehaviour
 
     void Update()
     {
-        if (!IsServer) return; // All AI runs on server only
+        if (!IsServer) return;
         attackTimer -= Time.deltaTime;
-
-        switch (currentState)
+        switch (state)
         {
-            case State.Patrol: DoPatrol(); break;
-            case State.Chase: DoChase(); break;
-            case State.Attack: DoAttack(); break;
+            case AIState.Patrol: DoPatrol(); break;
+            case AIState.Chase: DoChase(); break;
+            case AIState.Attack: DoAttack(); break;
         }
     }
 
     private void DoPatrol()
     {
         patrolTimer -= Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position,
-            patrolTarget, moveSpeed * 0.5f * Time.deltaTime);
-
-        if (patrolTimer <= 0 || Vector3.Distance(transform.position, patrolTarget) < 0.5f)
+        transform.position = Vector3.MoveTowards(
+            transform.position, patrolTarget, moveSpeed * 0.5f * Time.deltaTime);
+        if (patrolTimer <= 0 ||
+            Vector3.Distance(transform.position, patrolTarget) < 0.3f)
             SetNewPatrolTarget();
 
-        // Check for players
-        target = FindClosestPlayer();
-        if (target != null && Vector3.Distance(transform.position, target.position) < detectionRange)
-            currentState = State.Chase;
+        Transform closest = FindClosestPlayer();
+        if (closest != null &&
+            Vector3.Distance(transform.position, closest.position) < detectionRange)
+        {
+            target = closest;
+            state = AIState.Chase;
+        }
     }
 
     private void DoChase()
     {
-        if (target == null) { currentState = State.Patrol; return; }
-
+        if (target == null) { state = AIState.Patrol; return; }
         float dist = Vector3.Distance(transform.position, target.position);
-
-        if (dist > detectionRange) { currentState = State.Patrol; target = null; return; }
-        if (dist <= attackRange) { currentState = State.Attack; return; }
-
-        transform.position = Vector3.MoveTowards(transform.position,
-            target.position, moveSpeed * Time.deltaTime);
+        if (dist > detectionRange) { state = AIState.Patrol; target = null; return; }
+        if (dist <= attackRange) { state = AIState.Attack; return; }
+        transform.position = Vector3.MoveTowards(
+            transform.position, target.position, moveSpeed * Time.deltaTime);
     }
 
     private void DoAttack()
     {
-        if (target == null) { currentState = State.Patrol; return; }
-
+        if (target == null) { state = AIState.Patrol; return; }
         float dist = Vector3.Distance(transform.position, target.position);
-        if (dist > attackRange) { currentState = State.Chase; return; }
-
+        if (dist > attackRange) { state = AIState.Chase; return; }
         if (attackTimer <= 0)
         {
             target.GetComponent<PlayerHealth>()?.TakeDamage(attackDamage);
@@ -81,7 +78,6 @@ public class EnemyAI : NetworkBehaviour
 
     private Transform FindClosestPlayer()
     {
-        // Find all NetworkObjects that are players
         float minDist = float.MaxValue;
         Transform closest = null;
         foreach (var pc in FindObjectsOfType<PlayerController>())
@@ -94,7 +90,8 @@ public class EnemyAI : NetworkBehaviour
 
     private void SetNewPatrolTarget()
     {
-        patrolTarget = new Vector3(Random.Range(-4f, 4f), 0, Random.Range(-4f, 4f));
+        patrolTarget = new Vector3(
+            Random.Range(-4f, 4f), 0, Random.Range(-4f, 4f));
         patrolTimer = Random.Range(3f, 6f);
     }
 }
