@@ -11,36 +11,107 @@ public class PlayerHealth : NetworkBehaviour
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Server);
 
-    private Slider healthBarSlider;
+    // Own health bar — found at runtime via GameObject.Find
+    private Slider myHealthBar;
+
+    // Partner health bar — found at runtime via GameObject.Find
+    private Slider partnerHealthBar;
+
+    private CanvasGroup partnerHealthBarCanvasGroup;
+    private CanvasGroup partnerHealthLabelCanvasGroup;
 
     public override void OnNetworkSpawn()
     {
-        // Only the LOCAL player (owner) should update this UI
+        // Subscribe to health changes
+        currentHealth.OnValueChanged += OnHealthChanged;
+
         if (IsOwner)
         {
-            // Find the HealthBar slider in the scene at runtime
-            GameObject sliderObj = GameObject.Find("HealthBar");
-            if (sliderObj != null)
-                healthBarSlider = sliderObj.GetComponent<Slider>();
+            // This is MY player — connect to MY health bar
+            FindAndSetupMyHealthBar();
+        }
+        else
+        {
+            // This is the PARTNER player — connect to PARTNER health bar
+            FindAndSetupPartnerHealthBar();
+        }
+    }
 
-            // Set initial value
-            if (healthBarSlider != null)
+    private void FindAndSetupMyHealthBar()
+    {
+        GameObject sliderObj = GameObject.Find("HealthBar");
+        if (sliderObj != null)
+        {
+            myHealthBar = sliderObj.GetComponent<Slider>();
+            if (myHealthBar != null)
             {
-                healthBarSlider.minValue = 0;
-                healthBarSlider.maxValue = maxHealth;
-                healthBarSlider.value = currentHealth.Value;
+                myHealthBar.minValue = 0;
+                myHealthBar.maxValue = maxHealth;
+                myHealthBar.value = currentHealth.Value;
+                Debug.Log("[PlayerHealth] My health bar connected.");
             }
         }
+        else
+        {
+            Debug.LogWarning("[PlayerHealth] HealthBar not found in scene!");
+        }
+    }
 
-        // Listen for changes on all clients
-        currentHealth.OnValueChanged += OnHealthChanged;
+    private void FindAndSetupPartnerHealthBar()
+    {
+        GameObject sliderObj = GameObject.Find("PartnerHealthBar");
+        GameObject partnerHealthLabel = GameObject.Find("PartnerHealthLabel");
+        if (sliderObj != null && partnerHealthLabel != null)
+        {
+            partnerHealthBar = sliderObj.GetComponent<Slider>();
+            if (partnerHealthBar != null)
+            {
+                partnerHealthBar.minValue = 0;
+                partnerHealthBar.maxValue = maxHealth;
+                partnerHealthBar.value = currentHealth.Value;
+
+                // Get CanvasGroup from PartnerHealthBar
+                partnerHealthBarCanvasGroup =
+                    partnerHealthBar.GetComponent<CanvasGroup>();
+
+                // Show PartnerHealthBar smoothly
+                if (partnerHealthBarCanvasGroup != null)
+                {
+                    partnerHealthBarCanvasGroup.alpha = 1;
+                    partnerHealthBarCanvasGroup.interactable = true;
+                    partnerHealthBarCanvasGroup.blocksRaycasts = true;
+                }
+
+                // Get CanvasGroup from PartnerHealthLabel
+                partnerHealthLabelCanvasGroup =
+                    partnerHealthLabel.GetComponent<CanvasGroup>();
+                
+                // Show PartnerHealthLabel smoothly
+                if (partnerHealthLabelCanvasGroup != null)
+                {
+                    partnerHealthLabelCanvasGroup.alpha = 1;
+                    partnerHealthLabelCanvasGroup.interactable = true;
+                    partnerHealthLabelCanvasGroup.blocksRaycasts = true;
+                }
+
+                Debug.Log("[PlayerHealth] PartnerHealthBar and PartnerHealthLabel connected successfully.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[PlayerHealth] PartnerHealthBar or PartnerHealthLabel not found in scene!");
+        }
     }
 
     private void OnHealthChanged(float oldVal, float newVal)
     {
-        // Only update UI for the player that owns this character
-        if (IsOwner && healthBarSlider != null)
-            healthBarSlider.value = newVal;
+        // Update MY health bar if I own this player
+        if (IsOwner && myHealthBar != null)
+            myHealthBar.value = newVal;
+
+        // Update PARTNER health bar if this is the partner
+        if (!IsOwner && partnerHealthBar != null)
+            partnerHealthBar.value = newVal;
     }
 
     public void TakeDamage(float amount)
@@ -52,13 +123,15 @@ public class PlayerHealth : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void HealServerRpc(float amount)
     {
-        currentHealth.Value = Mathf.Min(maxHealth, currentHealth.Value + amount);
+        currentHealth.Value = Mathf.Min(maxHealth,
+            currentHealth.Value + amount);
     }
 
     public void Heal(float amount)
     {
         if (!IsServer) return;
-        currentHealth.Value = Mathf.Min(maxHealth, currentHealth.Value + amount);
+        currentHealth.Value = Mathf.Min(maxHealth,
+            currentHealth.Value + amount);
     }
 
     public override void OnDestroy()
