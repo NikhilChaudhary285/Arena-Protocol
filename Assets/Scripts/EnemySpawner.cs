@@ -30,7 +30,7 @@ public class EnemySpawner : NetworkBehaviour
         for (int i = 0; i < enemiesPerWave; i++)
         {
             Vector3 pos = new Vector3(
-                Random.Range(-4f, 4f), 0, Random.Range(-4f, 4f));
+                Random.Range(-4f, 4f), 0.5f, Random.Range(-4f, 4f));
             GameObject enemy = Instantiate(enemyPrefab, pos, Quaternion.identity);
             enemy.GetComponent<NetworkObject>().Spawn(true);
         }

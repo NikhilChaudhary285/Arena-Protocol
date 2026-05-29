@@ -1,6 +1,7 @@
+using Unity.Netcode;
 using UnityEngine;
 
-public abstract class BaseAbility : MonoBehaviour
+public abstract class BaseAbility : NetworkBehaviour
 {
     public string abilityName = "Ability";
     public float cooldownDuration = 3f;
