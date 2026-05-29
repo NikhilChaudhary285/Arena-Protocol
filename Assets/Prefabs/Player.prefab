@@ -116,7 +116,7 @@ CharacterController:
   m_StepOffset: 0.1
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &207823728939639442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,7 +152,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49a8039802e399540a87a72ddabcf9bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPoints: []
   moveSpeed: 5
   gravity: -9.81
   abilities: []
@@ -169,8 +168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   abilityName: 
-  cooldownDuration: 3
-  cooldownTimer: 0
+  cooldownDuration: 4
   dashDistance: 3
 --- !u!114 &5990662039469844928
 MonoBehaviour:
@@ -185,8 +183,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   abilityName: 
-  cooldownDuration: 3
-  cooldownTimer: 0
+  cooldownDuration: 1
   projectilePrefab: {fileID: 1699202469945741399, guid: 3d7efb7451bcfc940958a5b8dba3af0a, type: 3}
   projectileSpeed: 10
 --- !u!114 &628614827168630844
@@ -202,8 +199,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   abilityName: 
-  cooldownDuration: 3
-  cooldownTimer: 0
+  cooldownDuration: 8
   healAmount: 30
 --- !u!114 &7948929892049658672
 MonoBehaviour:

@@ -27,11 +27,12 @@ public class PingDisplay : MonoBehaviour
             as Unity.Netcode.Transports.UTP.UnityTransport;
         if (transport != null)
         {
-            // RTT in ms (divide by 2 for one-way ping approximation)
+            // RTT = Round Trip Time in ms (divide by 2 for one-way ping approximation)
             ulong clientId = NetworkManager.Singleton.LocalClientId;
             var rtt = transport.GetCurrentRtt(clientId);
             smoothedPing = Mathf.Lerp(smoothedPing, rtt, 0.3f);
             pingText.text = $"Ping: {Mathf.RoundToInt(smoothedPing / 2)} ms";
+            Debug.Log($"RTT raw: {rtt}");
         }
         else
         {

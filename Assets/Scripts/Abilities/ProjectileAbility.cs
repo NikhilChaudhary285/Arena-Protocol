@@ -1,5 +1,4 @@
-using System;
-using Unity.Netcode;
+﻿using Unity.Netcode;
 using UnityEngine;
 
 public class ProjectileAbility : BaseAbility
@@ -10,10 +9,21 @@ public class ProjectileAbility : BaseAbility
     void Awake()
     {
         abilityName = "Shoot";
-        cooldownDuration = 1f;
+        //cooldownDuration = 1f;
     }
 
-    protected override void Activate(PlayerController player)
+    // FIX 1: Signature updated to accept inputDirection from BaseAbility.
+    //
+    // FIX 2: Camera.main and Input.mousePosition were called here, but
+    // Activate() runs on the SERVER (called from ActivateAbilityServerRpc).
+    // On the server Camera.main is null → NullReferenceException for Player B,
+    // and Input.mousePosition is always (0,0) so direction was always wrong.
+    //
+    // Solution: the aim direction is now computed CLIENT-SIDE in
+    // PlayerController.HandleAbilities() and passed through the ServerRpc
+    // as inputDirection — exactly the same pattern as DashAbility.
+    // ProjectileAbility just uses the direction it receives.
+    protected override void Activate(PlayerController player, Vector3 inputDirection)
     {
         if (projectilePrefab == null)
         {
@@ -21,41 +31,27 @@ public class ProjectileAbility : BaseAbility
             return;
         }
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Plane plane = new Plane(Vector3.up, Vector3.zero);
+        // inputDirection already computed on the owning client and sent via
+        // ServerRpc — no Camera or Input calls needed here.
+        Vector3 dir = inputDirection.sqrMagnitude > 0.01f
+            ? inputDirection
+            : player.transform.forward;   // fallback if cursor exactly on player
 
-        if (plane.Raycast(ray, out float dist))
-        {
-            Vector3 target = ray.GetPoint(dist);
-            Vector3 dir = (target - player.transform.position);
-            dir.y = 0;
-            dir.Normalize();
-
-            if (dir == Vector3.zero)
-                dir = player.transform.forward;
-
-            Vector3 spawnPos = player.transform.position + dir * 0.8f;
-
-            // Tell the SERVER to spawn the projectile
-            SpawnProjectileServerRpc(spawnPos, dir);
-        }
+        Vector3 spawnPos = player.transform.position + dir * 0.8f;
+        SpawnProjectileServerRpc(spawnPos, dir);
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void SpawnProjectileServerRpc(Vector3 spawnPos, Vector3 direction)
     {
-        // Double check we are on server
         if (!IsServer) return;
 
-        // Instantiate on server
         GameObject proj = Instantiate(
             projectilePrefab,
             spawnPos,
             Quaternion.LookRotation(direction));
 
-        // Get NetworkObject BEFORE spawning
         NetworkObject netObj = proj.GetComponent<NetworkObject>();
-
         if (netObj == null)
         {
             Debug.LogError("Projectile prefab missing NetworkObject component!");
@@ -63,11 +59,8 @@ public class ProjectileAbility : BaseAbility
             return;
         }
 
-        // Spawn on network FIRST
         netObj.Spawn(true);
 
-        // Set velocity AFTER spawn via the Projectile script
-        // NOT directly here � let the Projectile handle it
         Projectile projScript = proj.GetComponent<Projectile>();
         if (projScript != null)
             projScript.SetVelocity(direction, projectileSpeed);
