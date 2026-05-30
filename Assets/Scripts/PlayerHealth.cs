@@ -35,6 +35,14 @@ public class PlayerHealth : NetworkBehaviour
             // This is the PARTNER player — connect to PARTNER health bar
             FindAndSetupPartnerHealthBar();
         }
+
+        // Initialize health bar display immediately
+        // with whatever value currentHealth already has
+        if (IsOwner && myHealthBar != null)
+            myHealthBar.value = currentHealth.Value;
+
+        if (!IsOwner && partnerHealthBar != null)
+            partnerHealthBar.value = currentHealth.Value;
     }
 
     private void FindAndSetupMyHealthBar()

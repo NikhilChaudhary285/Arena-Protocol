@@ -32,7 +32,7 @@ public class PingDisplay : MonoBehaviour
             var rtt = transport.GetCurrentRtt(clientId);
             smoothedPing = Mathf.Lerp(smoothedPing, rtt, 0.3f);
             pingText.text = $"Ping: {Mathf.RoundToInt(smoothedPing / 2)} ms";
-            Debug.Log($"RTT raw: {rtt}");
+            //Debug.Log($"RTT raw: {rtt}");
         }
         else
         {
