@@ -1,4 +1,4 @@
-using Unity.Netcode;
+﻿using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
 using System.Collections;
@@ -6,6 +6,7 @@ using System.Collections;
 public class PlayerController : NetworkBehaviour
 {
     public float moveSpeed = 5f;
+    private Vector3 moveDirection;
     private Vector3 velocity;
     public float gravity = -9.81f;
     private CharacterController controller;
@@ -66,36 +67,51 @@ public class PlayerController : NetworkBehaviour
     void Update()
     {
         if (!IsOwner) return;
-        HandleMovement();
+
+        // Reading input in Update — stays responsive
+        float h = Input.GetAxisRaw("Horizontal");
+        float v = Input.GetAxisRaw("Vertical");
+        moveDirection = new Vector3(h, 0, v).normalized;
+
         HandleAbilities();
     }
 
-    private void HandleMovement()
+    private void FixedUpdate()
     {
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
-        Vector3 dir = new Vector3(h, 0, v).normalized;
-        MoveServerRpc(dir);
+        if (!IsOwner) return;
+
+        // Move locally on the owner client in FixedUpdate
+        // FixedUpdate runs at fixed 0.02s regardless of frame rate
+        // This makes Editor and Build feel IDENTICAL
+        controller.Move(moveDirection * moveSpeed * Time.fixedDeltaTime);
+
+        // Apply gravity locally too
+        velocity.y += gravity * Time.fixedDeltaTime;
+        controller.Move(velocity * Time.fixedDeltaTime);
+
+        // Tell server the new position after moving
+        // Server just accepts and replicates — no movement logic on server
+        SyncPositionServerRpc(transform.position);
     }
 
     [ServerRpc]
-    private void MoveServerRpc(Vector3 direction)
+    private void SyncPositionServerRpc(Vector3 newPosition)
     {
-        controller.Move(direction * moveSpeed * Time.deltaTime);
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+        // Server accepts client position and applies it
+        // NetworkTransform then replicates to all other clients
+        transform.position = newPosition;
     }
 
     private void HandleAbilities()
     {
         if (abilities == null) return;
 
-        // --- Movement direction (WASD) � used by Dash ---
+        // --- Movement direction (WASD) — used by Dash ---
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
         Vector3 moveDir = new Vector3(h, 0, v).normalized;
 
-        // --- Aim direction (mouse) � used by Projectile ---
+        // --- Aim direction (mouse) — used by Projectile ---
         // Computed here on the OWNING CLIENT where Camera.main exists and
         // Input.mousePosition is valid. Both would be null/zero on the server.
         Vector3 aimDir = GetMouseAimDirection();

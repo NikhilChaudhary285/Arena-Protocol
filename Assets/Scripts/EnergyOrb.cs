@@ -40,7 +40,7 @@ public class EnergyOrb : NetworkBehaviour
         spawnPosition = transform.position;
     }
 
-    // ── Collection ──────────────────────────────────────────────────────────
+    // Collection 
 
     private void OnTriggerEnter(Collider other)
     {
@@ -75,7 +75,7 @@ public class EnergyOrb : NetworkBehaviour
         gameObject.SetActive(false);
     }
 
-    // ── Respawn ─────────────────────────────────────────────────────────────
+    // Respawn 
 
     private void RespawnOrb()
     {
@@ -96,7 +96,7 @@ public class EnergyOrb : NetworkBehaviour
         gameObject.SetActive(true);
     }
 
-    // ── Default built-in effect (reused, never destroyed) ───────────────────
+    // Default built-in effect (reused, never destroyed) 
     private ParticleSystem BuildDefaultEffect()
     {
         GameObject vfxGo = new GameObject("OrbCollectVFX");

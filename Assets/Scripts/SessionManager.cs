@@ -123,11 +123,11 @@ public class SessionManager : NetworkBehaviour
                 hasData = true
             };
 
-            Debug.Log($"[Session] ✅ SAVED slot={slot} clientId={clientId} " +
+            Debug.Log($"[Session] :) SAVED slot={slot} clientId={clientId} " +
                       $"health={ph.currentHealth.Value} " +
                       $"cooldowns=[{string.Join(",", cds)}]");
 
-            // ✅ KEY FIX — remove clientId from map AFTER saving
+            // KEY FIX — remove clientId from map AFTER saving
             // This makes the slot appear "unoccupied" for reconnect detection
             clientSlotMap.Remove(clientId);
             Debug.Log($"[Session] Removed clientId={clientId} from slot map " +
@@ -166,7 +166,7 @@ public class SessionManager : NetworkBehaviour
 
         if (playerNetObj == null)
         {
-            Debug.LogError($"[Session] ❌ TIMEOUT — player object never " +
+            Debug.LogError($"[Session] :( TIMEOUT — player object never " +
                            $"found for clientId={clientId}");
             yield break;
         }
@@ -184,12 +184,12 @@ public class SessionManager : NetworkBehaviour
         if (playerNetObj.TryGetComponent<PlayerHealth>(out var ph))
         {
             ph.currentHealth.Value = state.health;
-            Debug.Log($"[Session] ✅ Restored health={state.health} " +
+            Debug.Log($"[Session] :) Restored health={state.health} " +
                       $"for clientId={clientId}");
         }
         else
         {
-            Debug.LogError("[Session] ❌ PlayerHealth not found on player!");
+            Debug.LogError("[Session] :( PlayerHealth not found on player!");
         }
 
         // Restore cooldowns
@@ -201,13 +201,13 @@ public class SessionManager : NetworkBehaviour
              i++)
         {
             abilities[i].SetCooldown(state.cooldowns[i]);
-            Debug.Log($"[Session] ✅ Restored ability[{i}] " +
+            Debug.Log($"[Session] :) Restored ability[{i}] " +
                       $"cooldown={state.cooldowns[i]:F2}");
         }
 
         // Clean up
         savedSlots.Remove(slot);
-        Debug.Log($"[Session] ✅ Restore complete for clientId={clientId}");
+        Debug.Log($"[Session] :) Restore complete for clientId={clientId}");
     }
 
     public override void OnDestroy()

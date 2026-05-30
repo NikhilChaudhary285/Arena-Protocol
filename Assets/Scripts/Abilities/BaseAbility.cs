@@ -6,7 +6,7 @@ public abstract class BaseAbility : NetworkBehaviour
     public string abilityName = "Ability";
     public float cooldownDuration = 3f;
 
-    // ── Networked cooldown ──────────────────────────────────────────────────
+    // Networked cooldown 
     // Read permission : Everyone (clients need it for UI + IsReady check)
     // Write permission: Server only (server is authoritative)
     private NetworkVariable<float> _cooldownTimer = new NetworkVariable<float>(
@@ -15,15 +15,15 @@ public abstract class BaseAbility : NetworkBehaviour
         NetworkVariableWritePermission.Server
     );
 
-    // ✅ KEPT: Public accessors — nothing changed here
+    // KEPT: Public accessors — nothing changed here
     public bool IsReady => _cooldownTimer.Value <= 0f;
     public float CooldownRemaining => Mathf.Max(0f, _cooldownTimer.Value);
 
-    // ✅ KEPT: Read-only shim — keeps existing read references compiling
+    // KEPT: Read-only shim — keeps existing read references compiling
     // SessionManager reads this on disconnect — that still works fine
     public float cooldownTimer => _cooldownTimer.Value;
 
-    // ✅ FIX: SetCooldown guard changed from IsServer to IsSpawned + IsServer
+    // FIX: SetCooldown guard changed from IsServer to IsSpawned + IsServer
     // Previously if NetworkObject wasn't fully spawned yet IsServer could
     // return false even on the host — causing the restore to silently fail
     public void SetCooldown(float value)
@@ -45,7 +45,7 @@ public abstract class BaseAbility : NetworkBehaviour
         _cooldownTimer.Value = Mathf.Max(0f, value);
     }
 
-    // ✅ KEPT: Server-only tick — unchanged
+    // KEPT: Server-only tick — unchanged
     protected virtual void Update()
     {
         if (!IsServer) return;
@@ -53,7 +53,7 @@ public abstract class BaseAbility : NetworkBehaviour
             _cooldownTimer.Value -= Time.deltaTime;
     }
 
-    // ✅ KEPT: TryActivate with inputDirection — unchanged
+    // KEPT: TryActivate with inputDirection — unchanged
     public void TryActivate(PlayerController player, Vector3 inputDirection)
     {
         if (!IsReady) return;
@@ -61,7 +61,7 @@ public abstract class BaseAbility : NetworkBehaviour
         _cooldownTimer.Value = cooldownDuration;
     }
 
-    // ✅ KEPT: Abstract method with inputDirection — unchanged
+    // KEPT: Abstract method with inputDirection — unchanged
     protected abstract void Activate(PlayerController player,
                                      Vector3 inputDirection);
 }

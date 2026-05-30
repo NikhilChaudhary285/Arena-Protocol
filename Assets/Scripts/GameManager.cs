@@ -6,6 +6,13 @@ public class GameManager : MonoBehaviour
     public GameObject hostButton;
     public GameObject clientButton;
 
+    private void Awake()
+    {
+        // Locking to 60fps — makes Editor and Build behave identically
+        Application.targetFrameRate = 60;
+        QualitySettings.vSyncCount = 0;
+    }
+
     public void StartHost()
     {
         NetworkManager.Singleton.StartHost();
