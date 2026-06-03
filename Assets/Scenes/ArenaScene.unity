@@ -365,8 +365,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   respawnDelay: 5
-  collectEffect: {fileID: 716163893}
-  vfxDuration: 1
 --- !u!114 &35202657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5624,8 +5622,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   respawnDelay: 5
-  collectEffect: {fileID: 1135684657}
-  vfxDuration: 1
 --- !u!114 &231853628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11152,8 +11148,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   respawnDelay: 5
-  collectEffect: {fileID: 67216770}
-  vfxDuration: 1
 --- !u!114 &402780636
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11298,8 +11292,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   respawnDelay: 5
-  collectEffect: {fileID: 365591477}
-  vfxDuration: 1
 --- !u!114 &437987451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27542,8 +27534,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   respawnDelay: 5
-  collectEffect: {fileID: 2006570123}
-  vfxDuration: 1
 --- !u!114 &1278480814
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33173,8 +33163,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   respawnDelay: 5
-  collectEffect: {fileID: 1105712469}
-  vfxDuration: 1
 --- !u!114 &1592449511
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34401,8 +34389,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   respawnDelay: 5
-  collectEffect: {fileID: 1514460551}
-  vfxDuration: 1
 --- !u!114 &1908714790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -39951,6 +39937,7 @@ GameObject:
   - component: {fileID: 1862454817451099482}
   - component: {fileID: 2070922926706116047}
   - component: {fileID: 5718836075551977535}
+  - component: {fileID: 7835946783978921677}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -39971,8 +39958,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   respawnDelay: 5
-  collectEffect: {fileID: 3938414056250419214}
-  vfxDuration: 1
 --- !u!23 &805841704897399323
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -45168,7 +45153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1675167316
+  GlobalObjectIdHash: 1413539565
   InScenePlacedSourceGlobalObjectIdHash: 1906876579
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -45194,6 +45179,23 @@ MonoBehaviour:
   enemyPrefab: {fileID: 538482978058259374, guid: f2688e0132274a644bab0576416926be, type: 3}
   enemiesPerWave: 3
   timeBetweenWaves: 15
+--- !u!114 &7835946783978921677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83532947546336428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10caa7fdb734ffe49aeab1096ecf3ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pools:
+  - prefab: {fileID: 1699202469945741399, guid: 3d7efb7451bcfc940958a5b8dba3af0a, type: 3}
+    initialSize: 10
+  - prefab: {fileID: 538482978058259374, guid: f2688e0132274a644bab0576416926be, type: 3}
+    initialSize: 6
 --- !u!222 &8972785467550972693
 CanvasRenderer:
   m_ObjectHideFlags: 0
