@@ -8,9 +8,6 @@ public class Projectile : NetworkBehaviour
 
     private Rigidbody rb;
 
-    // Projectile prefab
-    public GameObject myPrefab;
-
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -61,7 +58,7 @@ public class Projectile : NetworkBehaviour
     private void DestroyProjectile()
     {
         if (!IsServer) return;
-        if (myPrefab == null) { GetComponent<NetworkObject>().Despawn(true); return; }
-        NetworkObjectPool.Instance?.Return(myPrefab, GetComponent<NetworkObject>());
+        if (IsSpawned)
+            GetComponent<NetworkObject>().Despawn(true);
     }
 }

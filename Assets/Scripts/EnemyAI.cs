@@ -56,38 +56,19 @@ public class EnemyAI : NetworkBehaviour
 
     private void DoChase()
     {
-        // Re-evaluate closest player every frame — no target lock
-        target = FindClosestPlayer();
-
         if (target == null) { state = AIState.Patrol; return; }
-
         float dist = Vector3.Distance(transform.position, target.position);
-
-        if (dist > detectionRange)
-        {
-            state = AIState.Patrol;
-            target = null;
-            return;
-        }
-
+        if (dist > detectionRange) { state = AIState.Patrol; target = null; return; }
         if (dist <= attackRange) { state = AIState.Attack; return; }
-
         transform.position = Vector3.MoveTowards(
-            transform.position, target.position,
-            moveSpeed * Time.deltaTime);
+            transform.position, target.position, moveSpeed * Time.deltaTime);
     }
 
     private void DoAttack()
     {
-        // Re-evaluate closest player every frame here too
-        target = FindClosestPlayer();
-
         if (target == null) { state = AIState.Patrol; return; }
-
         float dist = Vector3.Distance(transform.position, target.position);
-
         if (dist > attackRange) { state = AIState.Chase; return; }
-
         if (attackTimer <= 0)
         {
             target.GetComponent<PlayerHealth>()?.TakeDamage(attackDamage);
